@@ -1,0 +1,23 @@
+[global]
+workers = 5
+log = "normal"
+limits = { forms = 32768 }
+template_dir = "./templates"
+db = './data/db.sqlite'
+data_path = './data'
+
+[development]
+address = "localhost"
+port = 8000
+secret_key = "K++RfkVQnEvbG7RwsfgBUggbpiRMuh5zIYY3LB8KC9M="
+
+[staging]
+address = "0.0.0.0"
+port = 8000
+secret_key = "1LdJr94z8qnUIK9qeNwVwMKW8PB7cMtYxJVbD/Oa7Oc="
+
+[production]
+address = "0.0.0.0"
+port = 8000
+log = "critical"
+secret_key = "rR+SemXDe5PKrZrd6GXnIsms/BUFiahD4oI9A3OG2x8="
