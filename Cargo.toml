@@ -3,6 +3,18 @@ name = "bookrss"
 version = "0.1.0"
 authors = ["Johannes Schriewer <hallo@dunkelstern.de>"]
 
+[[bin]]
+name = "bookrssd"
+path = "src/server/main.rs"
+
+[[bin]]
+name = "bookrss"
+path = "src/cli/main.rs"
+
+[lib]
+name = "lib"
+path = "src/lib/lib.rs"
+
 [dependencies]
 rocket = "0.3.6"
 rocket_codegen = "0.3.6"

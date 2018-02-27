@@ -4,9 +4,10 @@ use rocket::response::Failure;
 use rocket::http::Status;
 use rocket_contrib::Json;
 
-use database::{DB, DbConn};
+use lib::database::DB;
+use database::DbConn;
 
-use models::author::{Author, author};
+use lib::models::author::{Author, author};
 
 #[derive(FromForm)]
 pub struct AuthorQueryParameters {

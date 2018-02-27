@@ -4,9 +4,10 @@ use rocket::response::Failure;
 use rocket::http::Status;
 use rocket_contrib::Json;
 
-use database::{DB, DbConn};
+use lib::database::DB;
+use database::DbConn;
 
-use models::speaker::{Speaker, speaker};
+use lib::models::speaker::{Speaker, speaker};
 
 #[derive(FromForm)]
 pub struct SpeakerQueryParameters {

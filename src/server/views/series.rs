@@ -4,9 +4,10 @@ use rocket::response::Failure;
 use rocket::http::Status;
 use rocket_contrib::Json;
 
-use database::{DB, DbConn};
+use lib::database::DB;
+use database::DbConn;
 
-use models::series::{Series, series};
+use lib::models::series::{Series, series};
 
 #[derive(FromForm)]
 pub struct SeriesQueryParameters {

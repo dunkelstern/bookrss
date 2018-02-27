@@ -1,6 +1,6 @@
 use models::series::{series, Series};
-use models::speaker::speaker;
-
+use models::speaker::{speaker, Speaker};
+    
 table! {
     audiobook (id) {
         id -> Integer,
@@ -18,7 +18,7 @@ joinable!(audiobook -> speaker (speaker_id));
 
 #[derive(Queryable, Insertable, Identifiable, Associations, Serialize, Debug)]
 #[table_name = "audiobook"]
-//#[belongs_to(Speaker)]
+#[belongs_to(Speaker)]
 #[belongs_to(Series)]
 pub struct AudioBook {
     pub id: i32,

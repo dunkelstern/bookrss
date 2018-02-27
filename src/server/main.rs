@@ -10,12 +10,9 @@ use self::server::rocket;
 
 // Serde
 extern crate serde;
-#[macro_use]
-extern crate serde_derive;
 extern crate serde_json;
 
 // Diesel
-#[macro_use]
 extern crate diesel;
 extern crate r2d2_diesel;
 extern crate r2d2;
@@ -28,7 +25,7 @@ extern crate rss;
 extern crate chrono;
 
 // app
-pub mod models;
+extern crate lib;
 pub mod views;
 
 fn main() {

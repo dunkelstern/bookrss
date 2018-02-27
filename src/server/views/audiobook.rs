@@ -6,8 +6,8 @@ use rocket_contrib::Json;
 
 use database::DbConn;
 
-use models::audiobook::{AudioBook, audiobook};
-use models::series::{Series, series};
+use lib::models::audiobook::{AudioBook, audiobook};
+use lib::models::series::{Series, series};
 
 #[derive(FromForm)]
 pub struct AudioBooksQueryParameters {
