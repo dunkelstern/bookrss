@@ -11,10 +11,15 @@ extern crate serde_json;
 extern crate diesel;
 extern crate r2d2_diesel;
 extern crate r2d2;
-pub mod database;
 
 // Chrono
 extern crate chrono;
 
+// config
+extern crate config;
+extern crate shellexpand;
+
 // app
 pub mod models;
+pub mod settings;
+pub mod database;

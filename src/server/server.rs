@@ -1,10 +1,12 @@
 use std::ops::Deref;
+use std::str::FromStr;
 
-use rocket::{ Rocket, ignite };
-use rocket::fairing::AdHoc;
-use database::DbMiddleware;
+use rocket::{ Rocket, custom };
+use rocket::config::{Config, Environment, Limits, LoggingLevel, Result};
+use lib::database::init_pool;
 
 use views::*;
+use lib::settings::Settings;
 
 pub struct DataPath(pub String);
 
@@ -16,13 +18,24 @@ impl Deref for DataPath {
     }
 }
 
-pub fn rocket() -> Rocket {
-    ignite()
-        .attach(DbMiddleware)
-        .attach(AdHoc::on_attach(|rocket| {
-            let data_path = rocket.config().get_str("data_path").unwrap().to_string();
-            Ok(rocket.manage(DataPath(data_path)))            
-        }))
+pub fn rocket(config: Settings) -> Result<Rocket> {
+    let limits = Limits::new()
+        .limit("forms", config.server.limits.forms);
+
+    let conf = Config::build(Environment::Production)
+        .workers(config.server.workers)
+        .log_level(LoggingLevel::from_str(&config.server.log).unwrap_or(LoggingLevel::Normal))
+        .address(config.server.address)
+        .port(config.server.port)
+        .secret_key(config.server.secret_key)
+        .limits(limits)
+        .extra("template_dir", config.server.template_dir)
+        .finalize()?;
+
+    Ok(
+        custom(conf, true)
+        .manage(init_pool(config.database.url))
+        .manage(DataPath(config.path.data_path))
         .mount("/", routes![
             get_audiobook_list_filtered,
             get_audiobook_list,
@@ -39,4 +52,5 @@ pub fn rocket() -> Rocket {
             get_part_list,
             get_part,
         ])
+    )
 }

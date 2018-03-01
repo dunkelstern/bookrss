@@ -28,6 +28,16 @@ extern crate chrono;
 extern crate lib;
 pub mod views;
 
+use lib::settings::Settings;
+
 fn main() {
-    rocket().launch();
+    match Settings::new("bookrss") {
+        Ok(settings) => { 
+            match rocket(settings) {
+                Ok(rocket) => { rocket.launch(); },
+                Err(error) => { println!("Server config error: {:?}", error); },
+            };
+        },
+        Err(error) => { println!("Config error: {:?}", error); }
+    };
 }
