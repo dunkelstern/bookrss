@@ -30,10 +30,16 @@ pub struct PathSettings {
 }
 
 #[derive(Debug, Deserialize)]
+pub struct AudibleSettings {
+    pub activation_bytes: String,
+}
+
+#[derive(Debug, Deserialize)]
 pub struct Settings {
     pub server: RocketSettings,
     pub database: DBSettings,
     pub path: PathSettings,
+    pub audible: Option<AudibleSettings>,
 }
 
 impl Settings {
