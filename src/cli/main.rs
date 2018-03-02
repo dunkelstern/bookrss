@@ -21,8 +21,11 @@ extern crate clap;
 
 // app
 extern crate lib;
-use lib::settings::Settings;
+mod import;
+mod ffmpeg;
 
+use lib::settings::Settings;
+use import::import;
 
 fn main() {
     let matches = clap_app!(bookrss =>
@@ -39,8 +42,10 @@ fn main() {
     let config_file = matches.value_of("CONFIG").unwrap_or("bookrss");
 
     match Settings::new(config_file) {
-        Ok(settings) => { 
-            println!("run forest run: {:?}", config_file);
+        Ok(settings) => {
+            if let Some(matches) = matches.subcommand_matches("import") {
+                import(settings, matches);
+            }
         },
         Err(error) => { println!("Config error: {:?}", error); }
     };
