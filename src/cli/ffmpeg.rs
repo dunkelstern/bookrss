@@ -6,49 +6,62 @@ use serde::{de, Deserializer, Deserialize};
 use serde_json;
 
 #[derive(Deserialize, Debug)]
-pub struct MediaTags {
-    pub major_brand: Option<String>, // you can recognize aax files with this one
+struct MediaTags {
+    major_brand: Option<String>, // you can recognize aax files with this one
     
     // one of these is the author
-    pub artist: Option<String>, // first choice as it is the standard
-    pub author: Option<String>, // this one is mostly audible specific
+    artist: Option<String>, // first choice as it is the standard
+    author: Option<String>, // this one is mostly audible specific
 
     // one of these is the book name
-    pub album: Option<String>, // first choice
-    pub parent_title: Option<String>, // second choice, if available at all
-    pub title: String, // third choice, should be available always
+    album: Option<String>, // first choice
+    parent_title: Option<String>, // second choice, if available at all
+    title: String, // third choice, should be available always
 
     // one of these is a short description
-    pub comment: Option<String>, // id3 tag standard
-    pub description: Option<String>, // used in audible formats
+    comment: Option<String>, // id3 tag standard
+    description: Option<String>, // used in audible formats
 
     // one of these is kind of a publication date
-    pub date: Option<String>, // used in aax, probably only year
-    pub pub_date_start: Option<String>, // used in older audible format
+    date: Option<String>, // used in aax, probably only year
+    pub_date_start: Option<String>, // used in older audible format
 
     // narrator/speaker
-    pub narrator: Option<String>, // probably only used in older audible format
+    narrator: Option<String>, // probably only used in older audible format
 }
 
 #[derive(Deserialize, Debug)]
-pub struct MediaFormat {
-    pub format_name: String,
+struct MediaFormat {
+    format_name: String,
     #[serde(deserialize_with = "f64_from_str")]
-    pub duration: f64,
+    duration: f64,
     #[serde(deserialize_with = "usize_from_str")]
-    pub size: usize,
+    size: usize,
     #[serde(deserialize_with = "u32_from_str")]
-    pub bit_rate: u32,
-    pub tags: MediaTags,
+    bit_rate: u32,
+    tags: MediaTags,
 }
 
 #[derive(Deserialize, Debug)]
-pub struct MediaFormatContainer {
-    pub format: MediaFormat,
+struct MediaFormatContainer {
+    format: MediaFormat,
+}
+
+#[derive(Debug)]
+pub struct MediaInfo {
+    pub format: String,
+    pub author: String,
+    pub title: String,
+    pub description: String,
+    pub date: String,
+    pub narrator: String,
+    pub duration: f64,
+    pub size: usize,
+    pub bit_rate: u32,
 }
 
 /// Identify media file (read metadata), uses `ffprobe`
-pub fn identify(filename: &Path) -> Result<MediaFormat, serde_json::Error> {
+pub fn identify(filename: &Path) -> Result<MediaInfo, serde_json::Error> {
     let output = Command::new("ffprobe")
         .arg("-print_format")
         .arg("json")
@@ -63,7 +76,7 @@ pub fn identify(filename: &Path) -> Result<MediaFormat, serde_json::Error> {
     );
 
     match result {
-        Ok(format) => Ok(format.format),
+        Ok(format) => Ok(parse_format(format.format)),
         Err(err) => Err(err),
     }
 }
@@ -87,6 +100,47 @@ pub fn de_aax(filename: &Path, output: &Path, magic_bytes: &str) -> ExitStatus {
         .stdout(Stdio::null())
         .status()
         .expect("running ffmpeg")
+}
+
+fn parse_format(format: MediaFormat) -> MediaInfo {
+    let format_result = 
+        if format.format_name.contains("mp4") {
+            format.tags.major_brand.unwrap_or(String::from("mp4")).trim().to_string()
+        } else {
+            format.format_name
+        };
+    
+
+    MediaInfo {
+        format: format_result,
+        author: 
+            format.tags.artist.unwrap_or(
+            format.tags.author.unwrap_or(
+            String::from("unknown"))),
+
+        title: 
+            format.tags.album.unwrap_or(
+            format.tags.parent_title.unwrap_or(
+            format.tags.title)),
+
+        description: 
+            format.tags.comment.unwrap_or(
+            format.tags.description.unwrap_or(
+            String::from(""))),
+
+        date: 
+            format.tags.date.unwrap_or(
+            format.tags.pub_date_start.unwrap_or(
+            String::from(""))),
+
+        narrator: 
+            format.tags.narrator.unwrap_or(
+            String::from("unknown")),
+
+        duration: format.duration,
+        size: format.size,
+        bit_rate: format.bit_rate,
+    }
 }
 
 /// Convert string to f64 while deserializing
