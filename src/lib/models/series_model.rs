@@ -1,4 +1,4 @@
-use models::author::{author, Author};
+use models::*;
 
 table! {
     series (id) {
@@ -12,11 +12,21 @@ table! {
 
 joinable!(series -> author (author_id));
 
-#[derive(Queryable, Insertable, Identifiable, Associations, Serialize, Debug)]
+#[derive(Queryable, Identifiable, Associations, Serialize, Debug)]
 #[table_name = "series"]
 #[belongs_to(Author)]
 pub struct Series {
     pub id: i32,
+    pub title: String,
+    pub translation: String,
+    pub description: Option<String>,
+    pub author_id: i32,
+}
+
+#[derive(Insertable, Associations, Serialize, Debug)]
+#[table_name = "series"]
+#[belongs_to(Author)]
+pub struct NewSeries {
     pub title: String,
     pub translation: String,
     pub description: Option<String>,

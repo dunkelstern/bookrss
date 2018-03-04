@@ -13,3 +13,10 @@ pub struct Speaker {
     pub language: String,
     pub name: String,
 }
+
+#[derive(Insertable, Associations, Serialize, Debug)]
+#[table_name = "speaker"]
+pub struct NewSpeaker {
+    pub language: String,
+    pub name: String,
+}

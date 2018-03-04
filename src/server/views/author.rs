@@ -7,7 +7,7 @@ use rocket_contrib::Json;
 use lib::database::DB;
 use database::DbConn;
 
-use lib::models::author::{Author, author};
+use lib::models::*;
 
 #[derive(FromForm)]
 pub struct AuthorQueryParameters {

@@ -1,19 +1,22 @@
-pub mod author;
-pub mod speaker;
-pub mod part;
-pub mod audiobook;
-pub mod series;
+mod speaker_model;
+pub use self::speaker_model::{Speaker, NewSpeaker, speaker};
 
-use self::audiobook::audiobook as audiobook_table;
-use self::author::author as author_table;
-use self::part::part as part_table;
-use self::series::series as series_table;
-use self::speaker::speaker as speaker_table;
+mod part_model;
+pub use self::part_model::{Part, NewPart, part};
+
+mod series_model;
+pub use self::series_model::{Series, NewSeries, series};
+
+mod author_model;
+pub use self::author_model::{Author, NewAuthor, author};
+
+mod audiobook_model;
+pub use self::audiobook_model::{AudioBook, NewAudioBook, audiobook};
 
 allow_tables_to_appear_in_same_query!(
-    audiobook_table,
-    author_table,
-    part_table,
-    series_table,
-    speaker_table,
+    audiobook,
+    author,
+    part,
+    series,
+    speaker,
 );

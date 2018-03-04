@@ -1,4 +1,4 @@
-use models::audiobook::audiobook;
+use models::*;
 
 table! {
     part (id) {
@@ -7,6 +7,7 @@ table! {
         file_size -> Integer,
         start_time -> Integer,
         duration -> Integer,
+        bit_rate -> Integer,
         audiobook_id -> Integer,
     }
 }
@@ -14,7 +15,7 @@ table! {
 joinable!(part -> audiobook (audiobook_id));
 
 
-#[derive(Queryable, Insertable, Identifiable, Associations, Serialize, Debug)]
+#[derive(Queryable, Identifiable, Associations, Serialize, Debug)]
 #[table_name = "part"]
 #[belongs_to(AudioBook)]
 pub struct Part {
@@ -23,5 +24,18 @@ pub struct Part {
     pub file_size: i32,
     pub start_time: i32,
     pub duration: i32,
+    pub bit_rate: i32,
+    pub audiobook_id: i32,
+}
+
+#[derive(Insertable, Associations, Serialize, Debug)]
+#[table_name = "part"]
+#[belongs_to(AudioBook)]
+pub struct NewPart {
+    pub file_name: String,
+    pub file_size: i32,
+    pub start_time: i32,
+    pub duration: i32,
+    pub bit_rate: i32,
     pub audiobook_id: i32,
 }

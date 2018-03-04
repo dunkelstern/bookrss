@@ -7,7 +7,7 @@ use rocket_contrib::Json;
 use lib::database::DB;
 use database::DbConn;
 
-use lib::models::series::{Series, series};
+use lib::models::*;
 
 #[derive(FromForm)]
 pub struct SeriesQueryParameters {

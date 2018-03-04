@@ -7,7 +7,7 @@ use rocket_contrib::Json;
 use lib::database::DB;
 use database::DbConn;
 
-use lib::models::speaker::{Speaker, speaker};
+use lib::models::*;
 
 #[derive(FromForm)]
 pub struct SpeakerQueryParameters {

@@ -12,7 +12,7 @@ use rocket_contrib::Json;
 use server::DataPath;
 use database::DbConn;
 
-use lib::models::part::{Part, part};
+use lib::models::*;
 
 #[get("/parts/<audiobook_id>")]
 pub fn get_part_list(audiobook_id: i32, conn: DbConn) -> QueryResult<Json<Vec<Part>>> {

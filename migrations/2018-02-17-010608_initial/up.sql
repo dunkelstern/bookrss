@@ -37,6 +37,7 @@ CREATE TABLE part (
   file_size INTEGER NOT NULL,
   start_time INTEGER NOT NULL,
   duration INTEGER NOT NULL,
+  bit_rate INTEGER NOT NULL,
   audiobook_id INTEGER NOT NULL,
   FOREIGN KEY(audiobook_id) REFERENCES audiobook(id)
 );

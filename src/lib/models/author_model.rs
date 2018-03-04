@@ -13,3 +13,10 @@ pub struct Author {
     pub language: String,
     pub name: String,
 }
+
+#[derive(Insertable, Associations, Serialize, Debug)]
+#[table_name = "author"]
+pub struct NewAuthor {
+    pub language: String,
+    pub name: String,
+}
