@@ -75,6 +75,8 @@ pub fn identify(filename: &Path) -> Result<MediaInfo, serde_json::Error> {
         &String::from_utf8_lossy(&output.stdout).into_owned()
     );
 
+    println!("{:?}", result);
+
     match result {
         Ok(format) => Ok(parse_format(format.format)),
         Err(err) => Err(err),
@@ -95,6 +97,25 @@ pub fn de_aax(filename: &Path, output: &Path, magic_bytes: &str) -> ExitStatus {
         .arg("-vn")
         .arg("-c:a")
         .arg("copy")
+        .arg(output)
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .status()
+        .expect("running ffmpeg")
+}
+
+/// convert to podcast like format
+pub fn convert(filename: &Path, output: &Path, encoder: &str) -> ExitStatus {
+    let mut cmd = Command::new("ffmpeg");
+        
+    cmd 
+        .arg("-v")
+        .arg("1")
+        .arg("-i")
+        .arg(filename)
+        .arg("-vn")
+        .arg("-c:a")
+        .arg(encoder)
         .arg(output)
         .stdin(Stdio::null())
         .stdout(Stdio::null())
