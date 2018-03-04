@@ -23,6 +23,7 @@ extern crate clap;
 extern crate lib;
 mod import;
 mod ffmpeg;
+mod database;
 
 use lib::settings::Settings;
 use import::import;
