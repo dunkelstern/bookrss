@@ -52,12 +52,12 @@ pub struct MediaInfo {
     pub format: String,
     pub author: String,
     pub title: String,
-    pub description: String,
-    pub date: String,
+    pub description: Option<String>,
+    pub date: Option<String>,
     pub narrator: String,
-    pub duration: f64,
-    pub size: usize,
-    pub bit_rate: u32,
+    pub duration: i32,
+    pub size: i32,
+    pub bit_rate: i32,
 }
 
 /// Identify media file (read metadata), uses `ffprobe`
@@ -74,8 +74,6 @@ pub fn identify(filename: &Path) -> Result<MediaInfo, serde_json::Error> {
     let result = serde_json::from_str::<MediaFormatContainer>(
         &String::from_utf8_lossy(&output.stdout).into_owned()
     );
-
-    println!("{:?}", result);
 
     match result {
         Ok(format) => Ok(parse_format(format.format)),
@@ -131,6 +129,22 @@ fn parse_format(format: MediaFormat) -> MediaInfo {
             format.format_name
         };
     
+    let mut description:Option<String> = None;
+    if let Some(desc) = format.tags.description {
+        description = Some(desc);
+    }
+    if let Some(desc) = format.tags.comment {
+        description = Some(desc);
+    }
+
+    let mut date:Option<String> = None;
+    if let Some(d) = format.tags.pub_date_start {
+        date = Some(d);
+    }
+    if let Some(d) = format.tags.date {
+        date = Some(d);
+    }
+    
 
     MediaInfo {
         format: format_result,
@@ -144,23 +158,16 @@ fn parse_format(format: MediaFormat) -> MediaInfo {
             format.tags.parent_title.unwrap_or(
             format.tags.title)),
 
-        description: 
-            format.tags.comment.unwrap_or(
-            format.tags.description.unwrap_or(
-            String::from(""))),
-
-        date: 
-            format.tags.date.unwrap_or(
-            format.tags.pub_date_start.unwrap_or(
-            String::from(""))),
+        description,
+        date,
 
         narrator: 
             format.tags.narrator.unwrap_or(
             String::from("unknown")),
 
-        duration: format.duration,
-        size: format.size,
-        bit_rate: format.bit_rate,
+        duration: format.duration as i32,
+        size: format.size as i32,
+        bit_rate: format.bit_rate as i32,
     }
 }
 
