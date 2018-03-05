@@ -4,6 +4,7 @@ table! {
     audiobook (id) {
         id -> Integer,
         title -> Text,
+        slug -> Text,
         description -> Nullable<Text>,
         part_no -> Integer,
         publish_date -> Nullable<Text>,
@@ -22,6 +23,7 @@ joinable!(audiobook -> speaker (speaker_id));
 pub struct AudioBook {
     pub id: i32,
     pub title: String,
+    pub slug: String,
     pub description: Option<String>,
     pub part_no: i32,
     pub publish_date: Option<String>,
@@ -35,6 +37,7 @@ pub struct AudioBook {
 #[belongs_to(Series)]
 pub struct NewAudioBook {
     pub title: String,
+    pub slug: String,
     pub description: Option<String>,
     pub part_no: i32,
     pub publish_date: Option<String>,

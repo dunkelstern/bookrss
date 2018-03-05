@@ -15,6 +15,9 @@ extern crate r2d2;
 // Chrono
 extern crate chrono;
 
+// slugify
+extern crate slug;
+
 // cmdline parser
 #[macro_use]
 extern crate clap;

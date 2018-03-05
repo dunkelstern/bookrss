@@ -19,6 +19,9 @@ extern crate chrono;
 extern crate config;
 extern crate shellexpand;
 
+// slugify
+extern crate slug;
+
 // app
 pub mod models;
 pub mod settings;

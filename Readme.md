@@ -145,7 +145,7 @@ Run via: `cargo run --bin bookrssd`
 
 ### RSS Feeds
 
-- `GET /series_rss/<series_id>`
-  Fetch a podcast feed for a series
 - `GET /series_rss/<slug>`
   Fetch a podcast feed for a series
+- `GET /audiobook_rss/<slug>`
+  Fetch a podcast feed for a single book

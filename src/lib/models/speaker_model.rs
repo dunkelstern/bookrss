@@ -3,6 +3,7 @@ table! {
         id -> Integer,
         language -> Text,
         name -> Text,
+        slug -> Text,
     }
 }
 
@@ -12,6 +13,7 @@ pub struct Speaker {
     pub id: i32,
     pub language: String,
     pub name: String,
+    pub slug: String,
 }
 
 #[derive(Insertable, Associations, Serialize, Debug)]
@@ -19,4 +21,5 @@ pub struct Speaker {
 pub struct NewSpeaker {
     pub language: String,
     pub name: String,
+    pub slug: String,
 }

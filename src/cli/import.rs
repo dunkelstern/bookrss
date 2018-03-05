@@ -5,6 +5,7 @@ use std::str::FromStr;
 
 use chrono::prelude::*;
 use clap::ArgMatches;
+use slug::slugify;
 use lib::settings::Settings;
 use diesel::prelude::*;
 use diesel::insert_into;
@@ -108,6 +109,7 @@ fn save_to_db(filename: &Path, info: &MediaInfo, args: &ArgMatches, settings: &S
         let new_author = NewAuthor {
             language: String::from("unknown"),
             name: info.author.clone(),
+            slug: slugify(info.author.clone()),
         };
 
         let _ = insert_into(author::table)
@@ -131,6 +133,7 @@ fn save_to_db(filename: &Path, info: &MediaInfo, args: &ArgMatches, settings: &S
         let new_speaker = NewSpeaker {
             language: String::from("unknown"),
             name: info.narrator.clone(),
+            slug: slugify(info.narrator.clone()),
         };
 
         let _ = insert_into(speaker::table)
@@ -153,6 +156,7 @@ fn save_to_db(filename: &Path, info: &MediaInfo, args: &ArgMatches, settings: &S
     if series_result.len() == 0 {
         let new_series = NewSeries {
             title: series_name.clone(),
+            slug: slugify(series_name.clone()),
             translation: String::from("unknown"),
             description: None,
             author_id: author_result[0].id,
@@ -178,6 +182,7 @@ fn save_to_db(filename: &Path, info: &MediaInfo, args: &ArgMatches, settings: &S
     if audiobook_result.len() == 0 {
         let new_audiobook = NewAudioBook {
             title: info.title.clone(),
+            slug: slugify(info.title.clone()),
             description: info.description.clone(),
             part_no: part_no,
             publish_date: info.date.clone(),

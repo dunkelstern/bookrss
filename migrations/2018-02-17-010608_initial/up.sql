@@ -1,18 +1,21 @@
 CREATE TABLE author (
   id INTEGER PRIMARY KEY NOT NULL,
   language VARCHAR NOT NULL,
-  name VARCHAR NOT NULL
+  name VARCHAR NOT NULL,
+  slug VARCHAR NOT NULL
 );
 
 CREATE TABLE speaker (
   id INTEGER PRIMARY KEY NOT NULL,
   language VARCHAR NOT NULL,
-  name VARCHAR NOT NULL
+  name VARCHAR NOT NULL,
+  slug VARCHAR NOT NULL
 );
 
 CREATE TABLE series (
   id INTEGER PRIMARY KEY NOT NULL,
   title VARCHAR NOT NULL,
+  slug VARCHAR NOT NULL,
   translation VARCHAR NOT NULL,
   description TEXT,
   author_id INTEGER NOT NULL,
@@ -22,6 +25,7 @@ CREATE TABLE series (
 CREATE TABLE audiobook (
   id INTEGER PRIMARY KEY NOT NULL,
   title VARCHAR NOT NULL,
+  slug VARCHAR NOT NULL,
   description TEXT,
   part_no INTEGER NOT NULL,
   publish_date TEXT,
