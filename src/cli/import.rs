@@ -3,6 +3,7 @@ use std::fs;
 use std::str::FromStr;
 
 
+use chrono::prelude::*;
 use clap::ArgMatches;
 use lib::settings::Settings;
 use diesel::prelude::*;
@@ -209,6 +210,7 @@ fn save_to_db(filename: &Path, info: &MediaInfo, args: &ArgMatches, settings: &S
     }
 
     let new_part = NewPart {
+        import_date: Local::now().naive_local(),
         file_name: filename.file_name().unwrap().to_string_lossy().to_string(),
         file_size: info.size,
         start_time,

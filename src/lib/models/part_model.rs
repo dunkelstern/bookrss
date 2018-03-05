@@ -1,8 +1,10 @@
 use models::*;
+use chrono::prelude::*;
 
 table! {
     part (id) {
         id -> Integer,
+        import_date -> Timestamp,
         file_name -> Text,
         file_size -> Integer,
         start_time -> Integer,
@@ -20,6 +22,7 @@ joinable!(part -> audiobook (audiobook_id));
 #[belongs_to(AudioBook)]
 pub struct Part {
     pub id: i32,
+    pub import_date: NaiveDateTime,
     pub file_name: String,
     pub file_size: i32,
     pub start_time: i32,
@@ -32,6 +35,7 @@ pub struct Part {
 #[table_name = "part"]
 #[belongs_to(AudioBook)]
 pub struct NewPart {
+    pub import_date: NaiveDateTime,
     pub file_name: String,
     pub file_size: i32,
     pub start_time: i32,

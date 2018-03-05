@@ -33,6 +33,7 @@ CREATE TABLE audiobook (
 
 CREATE TABLE part (
   id INTEGER PRIMARY KEY NOT NULL,
+  import_date TIMESTAMP NOT NULL,
   file_name VARCHAR NOT NULL,
   file_size INTEGER NOT NULL,
   start_time INTEGER NOT NULL,
