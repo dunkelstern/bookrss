@@ -1,7 +1,10 @@
+use std::collections::HashSet;
+
 use diesel::prelude::*;
 use chrono::prelude::*;
-use rss::{ChannelBuilder, ItemBuilder, EnclosureBuilder, Item};
-use rss::extension::itunes::{ITunesItemExtensionBuilder};
+use rss::{ChannelBuilder, ItemBuilder, EnclosureBuilder, ImageBuilder, Item};
+use rss::extension::itunes::{ITunesItemExtensionBuilder, ITunesChannelExtensionBuilder};
+use rss::extension::dublincore::DublinCoreExtensionBuilder;
 
 use rocket::response::Failure;
 use rocket::http::Status;
@@ -53,11 +56,25 @@ fn build_channel(audiobook: AudioBook, conn: DbConn, config: Config) -> Result<S
         .load::<Author>(&*conn)
         .unwrap().pop().unwrap();
 
+    let speaker = speaker::table
+        .find(audiobook.speaker_id)
+        .load::<Speaker>(&*conn)
+        .unwrap().pop().unwrap();
+
     let parts = part::table
         .filter(part::audiobook_id.eq(audiobook.id))
         .order(part::import_date.asc())
         .load::<Part>(&*conn).unwrap();
 
+    let mut contributors = HashSet::<String>::new();
+    contributors.insert(author.name.clone());
+    contributors.insert(speaker.name.clone());
+
+    let mut image = ImageBuilder::default();
+
+    image
+        .url(format!("{}/cover/{}.jpg", config.path.external_url, parts[0].id));
+    
     let items: Vec<Item> = parts.iter().map(|ref pt| {
         let mut item = ItemBuilder::default();
         let mut ext = ITunesItemExtensionBuilder::default();
@@ -85,7 +102,7 @@ fn build_channel(audiobook: AudioBook, conn: DbConn, config: Config) -> Result<S
         item
             .title(audiobook.title.clone())
             .author(author.name.clone())
-            .pub_date(pt.import_date.format("%Y-%m-%dT%H:%M:%SZ").to_string())
+            .pub_date(pt.import_date.format("%a, %d %b %Y %H:%M:%S +0000").to_string())
             .itunes_ext(ext.build().unwrap())
             .enclosure(enc.build().unwrap());
 
@@ -96,7 +113,18 @@ fn build_channel(audiobook: AudioBook, conn: DbConn, config: Config) -> Result<S
         item.build().unwrap()
     }).collect();
 
+    let contributors: Vec<String> = contributors.iter().map(|s| s.clone()).collect();
+    let mut dc = DublinCoreExtensionBuilder::default();
+    dc.contributors(contributors);
+
+    channel.dublin_core_ext(dc.build().unwrap());
+    channel.image(image.build().unwrap());
     channel.items(items);
+
+    let mut channel_ext = ITunesChannelExtensionBuilder::default();
+    channel_ext
+        .author(author.name.clone());
+    channel.itunes_ext(channel_ext.build().unwrap());
 
     Ok(channel.build().unwrap().to_string())
 }
