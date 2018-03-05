@@ -27,6 +27,7 @@ extern crate chrono;
 // app
 extern crate lib;
 pub mod views;
+mod config;
 
 use lib::settings::Settings;
 

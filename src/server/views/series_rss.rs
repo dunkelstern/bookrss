@@ -9,10 +9,11 @@ use rocket::http::Status;
 //use lib::database::DB;
 use database::DbConn;
 
+use config::Config;
 use lib::models::*;
 
 #[get("/series_rss/<id>")]
-pub fn get_series_rss(id: i32, conn: DbConn) -> Result<String, Failure> {
+pub fn get_series_rss(id: i32, conn: DbConn, config: Config) -> Result<String, Failure> {
     let series = series::table
         .find(id)
         .load::<Series>(&*conn);
@@ -22,7 +23,7 @@ pub fn get_series_rss(id: i32, conn: DbConn) -> Result<String, Failure> {
         Ok(mut series) => {
             if let Some(series) = series.pop() {
                 // found it, build rss feed
-                build_channel(series, conn)
+                build_channel(series, conn, config)
             } else {
                 // not found
                 Err(Failure(Status::NotFound))
@@ -33,12 +34,12 @@ pub fn get_series_rss(id: i32, conn: DbConn) -> Result<String, Failure> {
     }
 }
 
-fn build_channel(series: Series, conn: DbConn) -> Result<String, Failure> {
+fn build_channel(series: Series, conn: DbConn, config: Config) -> Result<String, Failure> {
     let mut channel = ChannelBuilder::default();
 
     channel
         .title(series.title.clone())
-        .link("http://example.com") // FIXME: create url correct url
+        .link(config.path.external_url.clone())
         .language(series.translation.clone())
         .description(series.description.unwrap_or(series.title));
 
@@ -73,7 +74,7 @@ fn build_channel(series: Series, conn: DbConn) -> Result<String, Failure> {
                 .duration(NaiveTime::from_num_seconds_from_midnight(pt.duration as u32, 0).format("%H:%M:%S").to_string());
 
             // FIXME: generate correct url
-            let url = format!("http://127.0.0.1:8000/part/{}", pt.id);
+            let url = format!("{}/part/{}", config.path.external_url, pt.id);
             let mut mime = "application/octet-stream";
             if pt.file_name.ends_with(".m4a") || pt.file_name.ends_with(".m4b") || pt.file_name.ends_with(".mp4") {
                 mime = "audio/mp4";

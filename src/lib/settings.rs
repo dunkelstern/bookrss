@@ -1,14 +1,15 @@
-pub use config::Config;
-use config::{File, Environment, ConfigError};
 use std::path::Path;
 use shellexpand::tilde;
 
-#[derive(Debug, Deserialize)]
+use config::{File, Environment, ConfigError};
+pub use config::Config;
+
+#[derive(Debug, Deserialize, Clone)]
 pub struct LimitSettings {
     pub forms: u64,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct RocketSettings {
     pub workers: u16,
     pub log: String,
@@ -19,22 +20,23 @@ pub struct RocketSettings {
     pub secret_key: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct DBSettings {
     pub url: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct PathSettings {
     pub data_path: String,
+    pub external_url: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct AudibleSettings {
     pub activation_bytes: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Settings {
     pub server: RocketSettings,
     pub database: DBSettings,

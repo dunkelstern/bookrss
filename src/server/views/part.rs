@@ -2,14 +2,13 @@ use std::path::Path;
 
 use diesel::prelude::*;
 
-use rocket::State;
 use rocket::response::NamedFile;
 use rocket::http::Status;
 use rocket::response::Failure;
 
 use rocket_contrib::Json;
 
-use server::DataPath;
+use config::Config;
 use database::DbConn;
 
 use lib::models::*;
@@ -26,7 +25,7 @@ pub fn get_part_list(audiobook_id: i32, conn: DbConn) -> QueryResult<Json<Vec<Pa
 
 
 #[get("/part/<id>")]
-pub fn get_part(id: i32, conn: DbConn, data_path: State<DataPath> ) -> Result<NamedFile, Failure> {
+pub fn get_part(id: i32, conn: DbConn, config: Config) -> Result<NamedFile, Failure> {
     let file = part::table
         .find(id)
         .select(part::file_name)
@@ -34,7 +33,7 @@ pub fn get_part(id: i32, conn: DbConn, data_path: State<DataPath> ) -> Result<Na
 
     if let Ok(mut file) = file {
         if let Some(file) = file.pop() {
-            let path = Path::new(&data_path.0).join(file);
+            let path = Path::new(&config.path.data_path).join(file);
             NamedFile::open(&path).map_err(|_| Failure(Status::NotFound))
         } else {
             Err(Failure(Status::NotFound))

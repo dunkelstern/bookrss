@@ -1,41 +1,33 @@
-use std::ops::Deref;
 use std::str::FromStr;
 
 use rocket::{ Rocket, custom };
-use rocket::config::{Config, Environment, Limits, LoggingLevel, Result};
+use rocket::config;
+use rocket::config::{Environment, Limits, LoggingLevel, Result};
+
 use lib::database::init_pool;
 
 use views::*;
 use lib::settings::Settings;
-
-pub struct DataPath(pub String);
-
-impl Deref for DataPath {
-    type Target = String;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
+use config::Config;
 
 pub fn rocket(config: Settings) -> Result<Rocket> {
     let limits = Limits::new()
         .limit("forms", config.server.limits.forms);
 
-    let conf = Config::build(Environment::Production)
+    let conf = config::Config::build(Environment::Production)
         .workers(config.server.workers)
         .log_level(LoggingLevel::from_str(&config.server.log).unwrap_or(LoggingLevel::Normal))
-        .address(config.server.address)
+        .address(config.server.address.clone())
         .port(config.server.port)
-        .secret_key(config.server.secret_key)
+        .secret_key(config.server.secret_key.clone())
         .limits(limits)
-        .extra("template_dir", config.server.template_dir)
+        .extra("template_dir", config.server.template_dir.clone())
         .finalize()?;
 
     Ok(
         custom(conf, true)
-        .manage(init_pool(config.database.url))
-        .manage(DataPath(config.path.data_path))
+        .manage(init_pool(config.database.url.clone()))
+        .manage(Config(config))
         .mount("/", routes![
             get_audiobook_list_filtered,
             get_audiobook_list,
