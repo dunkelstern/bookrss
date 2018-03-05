@@ -45,6 +45,7 @@ pub fn rocket(config: Settings) -> Result<Rocket> {
             get_part,
             get_series_rss,
             get_audiobook_rss,
+            get_cover,
         ])
     )
 }

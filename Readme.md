@@ -143,6 +143,11 @@ Run via: `cargo run --bin bookrssd`
 - `GET /part/<id>`
   Fetch the actual binary file that contains the part
 
+### Cover art
+
+- `GET /cover/<part_id>.jpg`
+  Fetch a podcast cover art image
+
 ### RSS Feeds
 
 - `GET /series_rss/<slug>`

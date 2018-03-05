@@ -65,6 +65,7 @@ fn build_channel(audiobook: AudioBook, conn: DbConn, config: Config) -> Result<S
 
         ext
             .author(author.name.clone())
+            .image(format!("{}/cover/{}.jpg", config.path.external_url, pt.id))
             .duration(NaiveTime::from_num_seconds_from_midnight(pt.duration as u32, 0).format("%H:%M:%S").to_string());
 
         let url = format!("{}/part/{}", config.path.external_url, pt.id);

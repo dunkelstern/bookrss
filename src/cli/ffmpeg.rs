@@ -81,6 +81,21 @@ pub fn identify(filename: &Path) -> Result<MediaInfo, serde_json::Error> {
     }
 }
 
+pub fn extract_coverart(filename: &Path, output: &Path) -> ExitStatus {
+    let mut cmd = Command::new("ffmpeg");
+        
+    cmd 
+        .arg("-v")
+        .arg("0")
+        .arg("-i")
+        .arg(filename)
+        .arg(output)
+        .stdin(Stdio::null())
+        .stdout(Stdio::null())
+        .status()
+        .expect("running ffmpeg")
+}
+
 /// Decode `aax` audible audio book
 pub fn de_aax(filename: &Path, output: &Path, magic_bytes: &str) -> ExitStatus {
     let mut cmd = Command::new("ffmpeg");

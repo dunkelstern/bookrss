@@ -10,7 +10,7 @@ use lib::settings::Settings;
 use diesel::prelude::*;
 use diesel::insert_into;
 
-use ffmpeg::{identify, de_aax, convert, MediaInfo};
+use ffmpeg::{identify, de_aax, extract_coverart, convert, MediaInfo};
 use database::get_db_conn;
 use lib::models::*;
 
@@ -47,6 +47,10 @@ pub fn import(settings: Settings, args: &ArgMatches) {
 fn convert_or_copy(filename: &Path, settings: &Settings, info: &MediaInfo) -> Result<Box<PathBuf>, &'static str> {
     let mut imported_filename = Path::new(&settings.path.data_path).join(filename.file_name().unwrap());
 
+    println!(" -> Extracting cover art");
+    let coverart_filename = imported_filename.with_extension("jpg");
+    let _ = extract_coverart(filename, &coverart_filename);
+    
     println!(" -> Converting/copying file");
 
     // if this is an audible aax file, remove the DRM
