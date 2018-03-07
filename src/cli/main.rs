@@ -57,3 +57,7 @@ fn main() {
         Err(error) => { println!("Config error: {:?}", error); }
     };
 }
+
+// TODO: write "delete" command (subcommands: book, series, author, speaker)
+// TODO: write "edit" command (subcommands: part, book, series, author, speaker), which opens file in EDITOR
+// TODO: write "list" command (subcommands: books, series, authors, speakers, parts)

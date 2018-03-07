@@ -37,6 +37,7 @@ pub fn get_series_rss(slug: String, conn: DbConn, config: Config) -> Result<Stri
     }
 }
 
+// TODO: clean up channel building and merge with /audiobook_rss/<slug>
 fn build_channel(series: Series, conn: DbConn, config: Config) -> Result<String, Failure> {
     let mut channel = ChannelBuilder::default();
 

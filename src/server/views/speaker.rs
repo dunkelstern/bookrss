@@ -55,6 +55,7 @@ pub fn patch_speaker(id: i32, data: Json<Speaker>, conn: DbConn) -> Result<Json<
 
 #[delete("/speaker/<id>")]
 pub fn delete_speaker(id: i32, conn: DbConn) -> Result<Json<Speaker>, Failure> {
+    // TODO: delete series, audiobooks and parts
     find_or_404!(speaker::table, Speaker, id, conn, |item| {
         let _ = delete(&item).execute(&*conn);
 

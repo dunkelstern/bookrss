@@ -55,6 +55,7 @@ pub fn patch_author(id: i32, data: Json<Author>, conn: DbConn) -> Result<Json<Au
 
 #[delete("/author/<id>")]
 pub fn delete_author(id: i32, conn: DbConn) -> Result<Json<Author>, Failure> {
+    // TODO: delete series, audiobooks and parts
     find_or_404!(author::table, Author, id, conn, |item| {
         let _ = delete(&item).execute(&*conn);
 

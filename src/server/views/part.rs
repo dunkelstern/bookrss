@@ -34,3 +34,6 @@ pub fn get_part(id: i32, conn: DbConn, config: Config) -> Result<NamedFile, Fail
             .map_err(|_| Failure(Status::NotFound))
     })
 }
+
+// TODO: write import api
+// TODO: allow part deletion (delete file and cover too)
