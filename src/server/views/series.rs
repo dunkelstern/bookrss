@@ -1,4 +1,5 @@
 use diesel::prelude::*;
+use diesel::{delete, insert_into};
 
 use rocket::response::Failure;
 use rocket::http::Status;
@@ -8,6 +9,7 @@ use lib::database::DB;
 use database::DbConn;
 
 use lib::models::*;
+use lib::macros::*;
 
 #[derive(FromForm)]
 pub struct SeriesQueryParameters {
@@ -49,4 +51,39 @@ pub fn get_series(id: i32, conn: DbConn) -> Result<Json<Series>, Failure> {
     find_or_404!(series::table, Series, id, conn, |item| {
         Ok(Json(item))
     })
+}
+
+#[patch("/series/<id>", data="<data>")]
+pub fn patch_series(id: i32, data: Json<Series>, conn: DbConn) -> Result<Json<Series>, Failure> {
+    update_or_400!(series::table, Series, id, data, conn)
+}
+
+#[delete("/series/<id>")]
+pub fn delete_series(id: i32, conn: DbConn) -> Result<Json<Series>, Failure> {
+    // TODO: delete all audiobooks and parts belonging to the series
+    find_or_404!(series::table, Series, id, conn, |item| {
+        let _ = delete(&item).execute(&*conn);
+
+        Ok(Json(item))
+    })
+}
+
+#[post("/series", data="<data>")]
+pub fn create_series(data: Json<NewSeries>, conn: DbConn) -> Result<Json<Series>, Failure> {
+    let rows_inserted = insert_into(series::table)
+        .values(&data.into_inner())
+        .execute(&*conn)
+        .unwrap();
+    
+    if rows_inserted != 1 {
+        Err(Failure(Status::InternalServerError))
+    } else {
+        let item = series::table
+            .order(series::id.desc())
+            .limit(1)
+            .load::<Series>(&*conn)
+            .unwrap().pop().unwrap();
+
+        Ok(Json(item))
+    }
 }

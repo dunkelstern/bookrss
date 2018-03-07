@@ -1,4 +1,5 @@
 use diesel::prelude::*;
+use diesel::{delete, insert_into};
 
 use rocket::response::Failure;
 use rocket::http::Status;
@@ -74,4 +75,39 @@ pub fn get_audiobook(id: i32, conn: DbConn) -> Result<Json<AudioBook>, Failure> 
     find_or_404!(audiobook::table, AudioBook, id, conn, |item| {
         Ok(Json(item))
     })
+}
+
+#[patch("/audiobook/<id>", data="<data>")]
+pub fn patch_audiobook(id: i32, data: Json<AudioBook>, conn: DbConn) -> Result<Json<AudioBook>, Failure> {
+    update_or_400!(audiobook::table, AudioBook, id, data, conn)
+}
+
+#[delete("/audiobook/<id>")]
+pub fn delete_audiobook(id: i32, conn: DbConn) -> Result<Json<AudioBook>, Failure> {
+    // TODO: delete all parts belonging to the audiobook
+    find_or_404!(audiobook::table, AudioBook, id, conn, |item| {
+        let _ = delete(&item).execute(&*conn);
+
+        Ok(Json(item))
+    })
+}
+
+#[post("/audiobook", data="<data>")]
+pub fn create_audiobook(data: Json<NewAudioBook>, conn: DbConn) -> Result<Json<AudioBook>, Failure> {
+    let rows_inserted = insert_into(audiobook::table)
+        .values(&data.into_inner())
+        .execute(&*conn)
+        .unwrap();
+    
+    if rows_inserted != 1 {
+        Err(Failure(Status::InternalServerError))
+    } else {
+        let item = audiobook::table
+            .order(audiobook::id.desc())
+            .limit(1)
+            .load::<AudioBook>(&*conn)
+            .unwrap().pop().unwrap();
+
+        Ok(Json(item))
+    }
 }

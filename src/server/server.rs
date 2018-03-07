@@ -48,11 +48,17 @@ pub fn rocket(config: Settings) -> Result<Rocket> {
             get_series_list_filtered,
             get_series_list,
             get_series,
+            patch_series,
+            create_series,
+            delete_series,
         ])
         .mount("/", routes![
             get_audiobook_list_filtered,
             get_audiobook_list,
             get_audiobook,
+            patch_audiobook,
+            create_audiobook,
+            delete_audiobook,
         ])
         .mount("/", routes![
             get_part_list,
