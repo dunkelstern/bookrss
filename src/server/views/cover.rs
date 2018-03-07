@@ -27,19 +27,13 @@ impl<'r> Responder<'r> for FileWithType {
 pub fn get_cover(id: String, conn: DbConn, config: Config) -> Result<FileWithType, Failure> {
     let id = i32::from_str(&id.trim_right_matches(".jpg")).unwrap();
 
-    let file = part::table
-        .find(id)
-        .select(part::file_name)
-        .load::<String>(&*conn);
+    find_or_404!(part::table, Part, id, conn, |item: Part| {
+        let path = Path::new(&config.path.data_path)
+            .join(item.file_name)
+            .with_extension("jpg");
 
-    if let Ok(mut file) = file {
-        if let Some(file) = file.pop() {
-            let path = Path::new(&config.path.data_path).join(file).with_extension("jpg");
-            NamedFile::open(&path).map(|f| FileWithType(f)).map_err(|_| Failure(Status::NotFound))
-        } else {
-            Err(Failure(Status::NotFound))
-        }
-    } else {
-        Err(Failure(Status::ServiceUnavailable))        
-    }
+        NamedFile::open(&path)
+            .map(|f| FileWithType(f))
+            .map_err(|_| Failure(Status::NotFound))
+    })
 }

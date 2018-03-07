@@ -46,22 +46,7 @@ pub fn get_series_list(conn: DbConn) -> QueryResult<Json<Vec<Series>>> {
 
 #[get("/series/<id>")]
 pub fn get_series(id: i32, conn: DbConn) -> Result<Json<Series>, Failure> {
-    let series = series::table
-        .find(id)
-        .load::<Series>(&*conn);
-
-    // check if we could find the book
-    match series {
-        Ok(mut series) => {
-            if let Some(series) = series.pop() {
-                // found it
-                Ok(Json(series))
-            } else {
-                // not found
-                Err(Failure(Status::NotFound))
-            }
-        },
-        // DB error
-        Err(_) => Err(Failure(Status::ServiceUnavailable))
-    }
+    find_or_404!(series::table, Series, id, conn, |item| {
+        Ok(Json(item))
+    })
 }

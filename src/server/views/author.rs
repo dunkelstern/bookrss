@@ -41,22 +41,7 @@ pub fn get_author_list(conn: DbConn) -> QueryResult<Json<Vec<Author>>> {
 
 #[get("/author/<id>")]
 pub fn get_author(id: i32, conn: DbConn) -> Result<Json<Author>, Failure> {
-    let author = author::table
-        .find(id)
-        .load::<Author>(&*conn);
-
-    // check if we could find the book
-    match author {
-        Ok(mut author) => {
-            if let Some(author) = author.pop() {
-                // found it
-                Ok(Json(author))
-            } else {
-                // not found
-                Err(Failure(Status::NotFound))
-            }
-        },
-        // DB error
-        Err(_) => Err(Failure(Status::ServiceUnavailable))
-    }
+    find_or_404!(author::table, Author, id, conn, |item| {
+        Ok(Json(item))
+    })
 }

@@ -41,22 +41,7 @@ pub fn get_speaker_list(conn: DbConn) -> QueryResult<Json<Vec<Speaker>>> {
 
 #[get("/speaker/<id>")]
 pub fn get_speaker(id: i32, conn: DbConn) -> Result<Json<Speaker>, Failure> {
-    let speaker = speaker::table
-        .find(id)
-        .load::<Speaker>(&*conn);
-
-    // check if we could find the speaker
-    match speaker {
-        Ok(mut speaker) => {
-            if let Some(speaker) = speaker.pop() {
-                // found it
-                Ok(Json(speaker))
-            } else {
-                // not found
-                Err(Failure(Status::NotFound))
-            }
-        },
-        // DB error
-        Err(_) => Err(Failure(Status::ServiceUnavailable))
-    }
+    find_or_404!(speaker::table, Speaker, id, conn, |item| {
+        Ok(Json(item))
+    })
 }

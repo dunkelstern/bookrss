@@ -26,19 +26,11 @@ pub fn get_part_list(audiobook_id: i32, conn: DbConn) -> QueryResult<Json<Vec<Pa
 
 #[get("/part/<id>")]
 pub fn get_part(id: i32, conn: DbConn, config: Config) -> Result<NamedFile, Failure> {
-    let file = part::table
-        .find(id)
-        .select(part::file_name)
-        .load::<String>(&*conn);
+    find_or_404!(part::table, Part, id, conn, |item: Part| {
+        let path = Path::new(&config.path.data_path)
+            .join(item.file_name);
 
-    if let Ok(mut file) = file {
-        if let Some(file) = file.pop() {
-            let path = Path::new(&config.path.data_path).join(file);
-            NamedFile::open(&path).map_err(|_| Failure(Status::NotFound))
-        } else {
-            Err(Failure(Status::NotFound))
-        }
-    } else {
-        Err(Failure(Status::ServiceUnavailable))        
-    }
+        NamedFile::open(&path)
+            .map_err(|_| Failure(Status::NotFound))
+    })
 }

@@ -7,6 +7,7 @@ use rocket_contrib::Json;
 use database::DbConn;
 
 use lib::models::*;
+use lib::macros::*;
 
 #[derive(FromForm)]
 pub struct AudioBooksQueryParameters {
@@ -70,22 +71,7 @@ pub fn get_audiobook_list(conn: DbConn) -> QueryResult<Json<Vec<AudioBook>>> {
 
 #[get("/audiobook/<id>")]
 pub fn get_audiobook(id: i32, conn: DbConn) -> Result<Json<AudioBook>, Failure> {
-    let book = audiobook::table
-        .find(id)
-        .load::<AudioBook>(&*conn);
-
-    // check if we could find the book
-    match book {
-        Ok(mut book) => {
-            if let Some(book) = book.pop() {
-                // found it
-                Ok(Json(book))
-            } else {
-                // not found
-                Err(Failure(Status::NotFound))
-            }
-        },
-        // DB error
-        Err(_) => Err(Failure(Status::ServiceUnavailable))
-    }
+    find_or_404!(audiobook::table, AudioBook, id, conn, |item| {
+        Ok(Json(item))
+    })
 }
