@@ -13,7 +13,7 @@ table! {
 
 joinable!(series -> author (author_id));
 
-#[derive(Queryable, Identifiable, Associations, Serialize, Debug)]
+#[derive(Queryable, Insertable, Identifiable, AsChangeset, Associations, FromForm, Serialize, Deserialize, Debug)]
 #[table_name = "series"]
 #[belongs_to(Author)]
 pub struct Series {
@@ -25,7 +25,7 @@ pub struct Series {
     pub author_id: i32,
 }
 
-#[derive(Insertable, Associations, Serialize, Debug)]
+#[derive(Insertable, Associations, FromForm, Serialize, Deserialize, Debug)]
 #[table_name = "series"]
 #[belongs_to(Author)]
 pub struct NewSeries {

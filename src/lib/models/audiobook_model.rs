@@ -16,7 +16,7 @@ table! {
 joinable!(audiobook -> series (series_id));
 joinable!(audiobook -> speaker (speaker_id));
 
-#[derive(Queryable, Identifiable, Associations, Serialize, Debug)]
+#[derive(Queryable, Insertable, Identifiable, AsChangeset, Associations, FromForm, Serialize, Deserialize, Debug)]
 #[table_name = "audiobook"]
 #[belongs_to(Speaker)]
 #[belongs_to(Series)]
@@ -31,7 +31,7 @@ pub struct AudioBook {
     pub series_id: i32,
 }
 
-#[derive(Insertable, Associations, Serialize, Debug)]
+#[derive(Insertable, Associations, FromForm, Serialize, Deserialize, Debug)]
 #[table_name = "audiobook"]
 #[belongs_to(Speaker)]
 #[belongs_to(Series)]

@@ -1,10 +1,16 @@
 #![feature(plugin)]
+#![plugin(rocket_codegen)]
+#![feature(custom_derive)]
 
 // Serde
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
+
+// Rocket
+extern crate rocket;
+extern crate rocket_contrib;
 
 // Diesel
 #[macro_use]
@@ -26,3 +32,6 @@ extern crate slug;
 pub mod models;
 pub mod settings;
 pub mod database;
+
+#[macro_use]
+pub mod macros;

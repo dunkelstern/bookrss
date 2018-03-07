@@ -25,6 +25,7 @@ extern crate rss;
 extern crate chrono;
 
 // app
+#[macro_use]
 extern crate lib;
 pub mod views;
 mod config;

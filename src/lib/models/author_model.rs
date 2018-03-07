@@ -7,7 +7,7 @@ table! {
     }
 }
 
-#[derive(Queryable, Identifiable, Associations, Serialize, Debug)]
+#[derive(Queryable, Insertable, Identifiable, AsChangeset, Associations, FromForm, Serialize, Deserialize, Debug)]
 #[table_name = "author"]
 pub struct Author {
     pub id: i32,
@@ -16,7 +16,7 @@ pub struct Author {
     pub slug: String,
 }
 
-#[derive(Insertable, Associations, Serialize, Debug)]
+#[derive(Insertable, Associations, FromForm, Serialize, Deserialize, Debug)]
 #[table_name = "author"]
 pub struct NewAuthor {
     pub language: String,
