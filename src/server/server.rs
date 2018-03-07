@@ -29,23 +29,39 @@ pub fn rocket(config: Settings) -> Result<Rocket> {
         .manage(init_pool(config.database.url.clone()))
         .manage(Config(config))
         .mount("/", routes![
-            get_audiobook_list_filtered,
-            get_audiobook_list,
-            get_audiobook,
-            get_series_list_filtered,
-            get_series_list,
-            get_series,
             get_author_list_filtered,
             get_author_list,
             get_author,
+            patch_author,
+            create_author,
+            delete_author,
+        ])
+        .mount("/", routes![
             get_speaker_list_filtered,
             get_speaker_list,
             get_speaker,
+            patch_speaker,
+            create_speaker,
+            delete_speaker,
+        ])
+        .mount("/", routes![
+            get_series_list_filtered,
+            get_series_list,
+            get_series,
+        ])
+        .mount("/", routes![
+            get_audiobook_list_filtered,
+            get_audiobook_list,
+            get_audiobook,
+        ])
+        .mount("/", routes![
             get_part_list,
             get_part,
+            get_cover,
+        ])
+        .mount("/", routes![
             get_series_rss,
             get_audiobook_rss,
-            get_cover,
         ])
     )
 }

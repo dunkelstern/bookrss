@@ -1,4 +1,5 @@
 use diesel::prelude::*;
+use diesel::{delete, insert_into};
 
 use rocket::response::Failure;
 use rocket::http::Status;
@@ -8,6 +9,7 @@ use lib::database::DB;
 use database::DbConn;
 
 use lib::models::*;
+use lib::macros::*;
 
 #[derive(FromForm)]
 pub struct AuthorQueryParameters {
@@ -44,4 +46,38 @@ pub fn get_author(id: i32, conn: DbConn) -> Result<Json<Author>, Failure> {
     find_or_404!(author::table, Author, id, conn, |item| {
         Ok(Json(item))
     })
+}
+
+#[patch("/author/<id>", data="<data>")]
+pub fn patch_author(id: i32, data: Json<Author>, conn: DbConn) -> Result<Json<Author>, Failure> {
+    update_or_400!(author::table, Author, id, data, conn)
+}
+
+#[delete("/author/<id>")]
+pub fn delete_author(id: i32, conn: DbConn) -> Result<Json<Author>, Failure> {
+    find_or_404!(author::table, Author, id, conn, |item| {
+        let _ = delete(&item).execute(&*conn);
+
+        Ok(Json(item))
+    })
+}
+
+#[post("/author", data="<data>")]
+pub fn create_author(data: Json<NewAuthor>, conn: DbConn) -> Result<Json<Author>, Failure> {
+    let rows_inserted = insert_into(author::table)
+        .values(&data.into_inner())
+        .execute(&*conn)
+        .unwrap();
+    
+    if rows_inserted != 1 {
+        Err(Failure(Status::InternalServerError))
+    } else {
+        let item = author::table
+            .order(author::id.desc())
+            .limit(1)
+            .load::<Author>(&*conn)
+            .unwrap().pop().unwrap();
+
+        Ok(Json(item))
+    }
 }
