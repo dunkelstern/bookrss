@@ -127,27 +127,27 @@ fn save_to_db(filename: &Path, info: &MediaInfo, args: &ArgMatches, settings: &S
             .unwrap();
     }
 
-    // get or create speaker
-    let mut speaker_result = speaker::table
-        .filter(speaker::name.like(&info.narrator))
-        .load::<Speaker>(&*conn)
+    // get or create narrator
+    let mut narrator_result = narrator::table
+        .filter(narrator::name.like(&info.narrator))
+        .load::<Narrator>(&*conn)
         .unwrap();
 
-    if speaker_result.len() == 0 {
-        let new_speaker = NewSpeaker {
+    if narrator_result.len() == 0 {
+        let new_narrator = NewNarrator {
             language: String::from("unknown"),
             name: info.narrator.clone(),
             slug: slugify(info.narrator.clone()),
         };
 
-        let _ = insert_into(speaker::table)
-            .values(&new_speaker)
+        let _ = insert_into(narrator::table)
+            .values(&new_narrator)
             .execute(&*conn)
             .unwrap();
 
-        speaker_result = speaker::table
-            .filter(speaker::name.like(&info.narrator))
-            .load::<Speaker>(&*conn)
+        narrator_result = narrator::table
+            .filter(narrator::name.like(&info.narrator))
+            .load::<Narrator>(&*conn)
             .unwrap();
     }
 
@@ -190,7 +190,7 @@ fn save_to_db(filename: &Path, info: &MediaInfo, args: &ArgMatches, settings: &S
             description: info.description.clone(),
             part_no: part_no,
             publish_date: info.date.clone(),
-            speaker_id: speaker_result[0].id,
+            narrator_id: narrator_result[0].id,
             series_id: series_result[0].id,
         };
 

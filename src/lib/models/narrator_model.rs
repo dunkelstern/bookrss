@@ -1,5 +1,5 @@
 table! {
-    speaker (id) {
+    narrator (id) {
         id -> Integer,
         language -> Text,
         name -> Text,
@@ -8,8 +8,8 @@ table! {
 }
 
 #[derive(Queryable, Insertable, Identifiable, AsChangeset, Associations, FromForm, Serialize, Deserialize, Debug)]
-#[table_name = "speaker"]
-pub struct Speaker {
+#[table_name = "narrator"]
+pub struct Narrator {
     pub id: i32,
     pub language: String,
     pub name: String,
@@ -17,8 +17,8 @@ pub struct Speaker {
 }
 
 #[derive(Insertable, Associations, FromForm, Serialize, Deserialize, Debug)]
-#[table_name = "speaker"]
-pub struct NewSpeaker {
+#[table_name = "narrator"]
+pub struct NewNarrator {
     pub language: String,
     pub name: String,
     pub slug: String,

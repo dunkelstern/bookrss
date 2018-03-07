@@ -5,7 +5,7 @@ CREATE TABLE author (
   slug VARCHAR NOT NULL
 );
 
-CREATE TABLE speaker (
+CREATE TABLE narrator (
   id INTEGER PRIMARY KEY NOT NULL,
   language VARCHAR NOT NULL,
   name VARCHAR NOT NULL,
@@ -29,9 +29,9 @@ CREATE TABLE audiobook (
   description TEXT,
   part_no INTEGER NOT NULL,
   publish_date TEXT,
-  speaker_id INTEGER NOT NULL,
+  narrator_id INTEGER NOT NULL,
   series_id INTEGER NOT NULL,
-  FOREIGN KEY(speaker_id) REFERENCES speaker(id),
+  FOREIGN KEY(narrator_id) REFERENCES narrator(id),
   FOREIGN KEY(series_id) REFERENCES series(id)
 );
 

@@ -14,7 +14,7 @@ use lib::macros::*;
 pub struct AudioBooksQueryParameters {
     author_id: Option<i32>,
     series_id: Option<i32>,
-    speaker_id: Option<i32>,
+    narrator_id: Option<i32>,
     translation: Option<String>,
 }
 
@@ -39,9 +39,9 @@ pub fn get_audiobook_list_filtered(query: AudioBooksQueryParameters, conn: DbCon
         queryset = queryset.filter(audiobook::series_id.eq(series_id));
     }
 
-    // speaker filter
-    if let Some(speaker_id) = query.speaker_id {
-        queryset = queryset.filter(audiobook::speaker_id.eq(speaker_id));
+    // narrator filter
+    if let Some(narrator_id) = query.narrator_id {
+        queryset = queryset.filter(audiobook::narrator_id.eq(narrator_id));
     }
 
     // order by id, load from database

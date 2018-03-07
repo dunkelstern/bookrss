@@ -37,12 +37,12 @@ pub fn rocket(config: Settings) -> Result<Rocket> {
             delete_author,
         ])
         .mount("/", routes![
-            get_speaker_list_filtered,
-            get_speaker_list,
-            get_speaker,
-            patch_speaker,
-            create_speaker,
-            delete_speaker,
+            get_narrator_list_filtered,
+            get_narrator_list,
+            get_narrator,
+            patch_narrator,
+            create_narrator,
+            delete_narrator,
         ])
         .mount("/", routes![
             get_series_list_filtered,

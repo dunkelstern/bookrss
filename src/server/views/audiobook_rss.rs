@@ -57,9 +57,9 @@ fn build_channel(audiobook: AudioBook, conn: DbConn, config: Config) -> Result<S
         .load::<Author>(&*conn)
         .unwrap().pop().unwrap();
 
-    let speaker = speaker::table
-        .find(audiobook.speaker_id)
-        .load::<Speaker>(&*conn)
+    let narrator = narrator::table
+        .find(audiobook.narrator_id)
+        .load::<Narrator>(&*conn)
         .unwrap().pop().unwrap();
 
     let parts = part::table
@@ -69,7 +69,7 @@ fn build_channel(audiobook: AudioBook, conn: DbConn, config: Config) -> Result<S
 
     let mut contributors = HashSet::<String>::new();
     contributors.insert(author.name.clone());
-    contributors.insert(speaker.name.clone());
+    contributors.insert(narrator.name.clone());
 
     let mut image = ImageBuilder::default();
 

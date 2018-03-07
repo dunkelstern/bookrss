@@ -26,7 +26,7 @@ struct MediaTags {
     date: Option<String>, // used in aax, probably only year
     pub_date_start: Option<String>, // used in older audible format
 
-    // narrator/speaker
+    // narrator
     narrator: Option<String>, // probably only used in older audible format
 }
 

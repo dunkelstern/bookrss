@@ -58,6 +58,6 @@ fn main() {
     };
 }
 
-// TODO: write "delete" command (subcommands: book, series, author, speaker)
-// TODO: write "edit" command (subcommands: part, book, series, author, speaker), which opens file in EDITOR
-// TODO: write "list" command (subcommands: books, series, authors, speakers, parts)
+// TODO: write "delete" command (subcommands: book, series, author, narrator)
+// TODO: write "edit" command (subcommands: part, book, series, author, narrator), which opens file in EDITOR
+// TODO: write "list" command (subcommands: books, series, authors, narrators, parts)

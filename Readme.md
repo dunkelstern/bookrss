@@ -98,7 +98,7 @@ Run via: `cargo run --bin bookrssd`
   Fetch a list of audio books. Available filters:
     - `author_id`
     - `series_id`
-    - `speaker_id`
+    - `narrator_id`
     - `translation`
 - `GET /audiobooks`
   Fetch a list of all audio books
@@ -115,15 +115,15 @@ Run via: `cargo run --bin bookrssd`
 - `GET /author/<id>`
   Fetch author by id
 
-### Speaker
+### Narrator
 
-- `GET /speakers?<query>`
-  Fetch a list of speakers. Available filters:
+- `GET /narrators?<query>`
+  Fetch a list of narrators. Available filters:
     - `language`
-- `GET /speakers`
-  Fetch a list of all speakers
-- `GET /speaker/<id>`
-  Fetch speaker by id
+- `GET /narrators`
+  Fetch a list of all narrators
+- `GET /narrator/<id>`
+  Fetch narrator by id
 
 ### Series
 

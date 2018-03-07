@@ -68,12 +68,12 @@ fn build_channel(series: Series, conn: DbConn, config: Config) -> Result<String,
     let mut image = ImageBuilder::default();
 
     let items: Vec<Item> = books.iter().map(|ref book| {
-        let speaker = speaker::table
-            .find(book.speaker_id)
-            .load::<Speaker>(&*conn)
+        let narrator = narrator::table
+            .find(book.narrator_id)
+            .load::<Narrator>(&*conn)
             .unwrap().pop().unwrap();
         
-        contributors.insert(speaker.name.clone());
+        contributors.insert(narrator.name.clone());
 
         let parts = part::table
             .filter(part::audiobook_id.eq(book.id))
